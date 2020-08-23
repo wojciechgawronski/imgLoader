@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
+
+body {
+      background-color: #222;
+      color           : lightgray;
+      font-family     : 'Titillium Web', sans-serif;
+      max-width       : 1000px;
+      margin          : 0 auto;
+      padding         : 0 5px;
+}
+
+.b {
+      font-weight: bold;
+}
+
+.i {
+      font-style: italic;
+}
+
+.u {
+      text-decoration: underline;
+}
+
+.upper {
+      text-transform: uppercase;
+}
+
+.orange {
+      color: orange;
+}
+
+.green {
+      color: green;
+}
+
+.red {
+      color: red;
+}
+
+.blue {
+      color: dodgerblue;
+}
+
+.gray {
+      color: gray;
+}
+
+.small {
+      font-size: small;
+}
+
+a {
+      color: dodgerblue;
+}
+
+a:hover {
+      text-decoration: none;
+}
+
+h1 {
+      font-weight: 200;
+}
+
+p.lead {
+      font-weight: 300;
+}
+
+pre {
+      color  : darkgrey;
+      border : 1px solid #999;
+      padding: 6px;
+}
+
+.pointer {
+      cursor: pointer;
+}
+
+.hr {
+      height    : 1px;
+      max-width : 900px;
+      margin    : 8px auto;
+      background: #888;
+}
+
+ul.ul-square {
+      list-style: none;
+}
+
+ul.ul-square li::before {
+      content    : "\2022";
+      color      : orange;
+      display    : inline-block;
+      width      : 1em;
+      margin-left: -1em;
+}
+
+td {
+      padding: 2px 7px;
+}
