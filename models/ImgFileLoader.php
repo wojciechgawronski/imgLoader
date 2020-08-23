@@ -23,8 +23,10 @@ class ImgFileLoader extends File implements AddFileImgInterface
             // img - name of form field
             $this->file = $file['img'];
 
-            if ($this->validateFile($this->file))
-                  $this->saveFile($this->file);
+            if ($this->validateFile($this->file)) {
+                  $resizeMessage = $this->resize($this->file);
+                  $this->saveFile($this->file, $resizeMessage);
+            }
       }
 
       /**
@@ -39,6 +41,7 @@ class ImgFileLoader extends File implements AddFileImgInterface
                   if ($file['error'] == 0) {
 
                         $errorMessage = '';
+
                         /**
                          * size
                          */
@@ -74,13 +77,13 @@ class ImgFileLoader extends File implements AddFileImgInterface
                   FlashMessages::addMessage("Nie dodano pliku. Dodaj plik.", 'warning');
             }
 
-            $this->redirect('');
+            parent::redirect('');
       }
 
       /**
        * 
        */
-      public function saveFile(array $file)
+      public function saveFile(array $file, string $resizeMessage = '')
       {
 
             $message = '';
@@ -104,12 +107,15 @@ class ImgFileLoader extends File implements AddFileImgInterface
             if ($check) {
 
                   if (file_exists($fileTargetPath)) {
-                        $message = 'P<li>lik o takiej nazwie już istnieje!</li>';
+                        $message = '<li>Plik o takiej nazwie już istnieje!</li>';
                         $type =  'warning';
                   } else {
                         if (move_uploaded_file($file["tmp_name"], $fileTargetPath)) {
-
-                              $message .= "<li>Plik: <b>" . basename($file["name"]) . "</b> został dodany!</li>";
+                              
+                              if (!empty($resizeMessage))
+                                    $message .= "<li>$resizeMessage</li>";
+                              
+                                    $message .= "<li>Plik: <b>" . basename($file["name"]) . "</b> został dodany!</li>";
                         } else {
 
                               $message .= "<li>Nie można przennieść pliku z kataog</li>u tymczasowego!";
@@ -121,16 +127,24 @@ class ImgFileLoader extends File implements AddFileImgInterface
                   $type =  'danger';
             }
 
+            $type = empty($type) ? '' : $type;
             FlashMessages::addMessage($message, $type);
-            $this->redirect('');
+            // parent::redirect('');
       }
 
+     
+
       /**
-       * 
+       * The Simplest Method
+       * https://stackoverflow.com/questions/11376315/creating-a-thumbnail-from-an-uploaded-image
        */
-      public function resize(array $file)
-      {
-      }
+      public function resize(array $file) : string {
+
+            $message = ResizeImage::resize();
+            return $message;
+        }
+        
+
 
       /**
        * Create dir if not exists
@@ -139,8 +153,15 @@ class ImgFileLoader extends File implements AddFileImgInterface
       public static function _mkdir(string $dir)
       {
             if (!file_exists($dir)) {
-                  if (mkdir($dir, 0777))
+                  if (mkdir($dir, 0777)) {
+
                         return "<li>Stworzono katalog: <b>$dir</b>.</li>";
+                  } else {
+
+                        FlashMessages::addMessage("Nie można utworzyć katalgu do zapisu zdjęć, aplikacja nie będzie działać!");
+
+                        parent::redirect('');
+                  }
             }
       }
 }

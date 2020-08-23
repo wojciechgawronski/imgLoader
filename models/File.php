@@ -16,9 +16,9 @@ abstract class File
       protected array $imagesAllowedTypes = ['image/jpg', 'image/jpeg', 'image/png'];
 
       /**
-       * 
+       * @return void
        */
-      public function redirect($url){
+      public static function redirect($url){
             header("Location: " . Config::ROOT_URL . "/" . $url);
             exit;
       }
