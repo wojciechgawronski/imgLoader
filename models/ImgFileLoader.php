@@ -14,6 +14,7 @@ class ImgFileLoader extends File implements AddFileImgInterface
 {
 
       protected $file;
+      protected $fileName;
 
       /**
        * 
@@ -22,10 +23,13 @@ class ImgFileLoader extends File implements AddFileImgInterface
       {
             // img - name of form field
             $this->file = $file['img'];
+            $this->fileName = $this->file['name'];
 
             if ($this->validateFile($this->file)) {
-                  $resizeMessage = $this->resize($this->file);
-                  $this->saveFile($this->file, $resizeMessage);
+                  if ($this->saveFile($this->file)) 
+                  {
+                        // $resizeMessage = $this->resize($this->file);
+                  }
             }
       }
 
@@ -83,14 +87,14 @@ class ImgFileLoader extends File implements AddFileImgInterface
       /**
        * 
        */
-      public function saveFile(array $file, string $resizeMessage = '')
+      public function saveFile(array $file)
       {
 
             $message = '';
             /**
              * Create a dir if not exists
              */
-            $message .= self::_mkdir(Config::IMG_PATH);
+            $message .= self::_mkdir('../' . Config::IMG_PATH);
 
 
             // new name:
@@ -99,7 +103,7 @@ class ImgFileLoader extends File implements AddFileImgInterface
             // $fileTargetPath = Config::IMG_PATH . '/' . date("Y_m_d__H.i.s") . "." . $extension;
 
             //  old name:
-            $fileTargetPath = Config::IMG_PATH . '/' . $file['name'];
+            $fileTargetPath = '../' . Config::IMG_PATH . '/' . $file['name'];
 
             // Check if image file is a actual image or fake image
             // getimagesize() - returns false on failure
@@ -112,38 +116,49 @@ class ImgFileLoader extends File implements AddFileImgInterface
                   } else {
                         if (move_uploaded_file($file["tmp_name"], $fileTargetPath)) {
                               
-                              if (!empty($resizeMessage))
-                                    $message .= "<li>$resizeMessage</li>";
+                              // create thum from loaded file
+                              $thumbImage = ResizeImage::createThumbnail($fileTargetPath, Config::THUMBNAIL_MAX_SIZE);
+
+                              ResizeImage::saveNewImg($thumbImage, $this->fileName, '_thumb');
+
+
+                              $scaleImage = ResizeImage::createScaleImage($fileTargetPath, $this->fileName, Config::IMG_SCALE);
+
+                              ResizeImage::saveNewImg($scaleImage, $this->fileName, '_scaled');
+
                               
-                                    $message .= "<li>Plik: <b>" . basename($file["name"]) . "</b> został dodany!</li>";
+                              FlashMessages::addMessage( "<li>Plik: <b>" . basename($file["name"]) . "</b> został dodany!</li>");
+                              $this->redirect('');
                         } else {
 
                               $message .= "<li>Nie można przennieść pliku z kataog</li>u tymczasowego!";
                               $type =  'warning';
                         }
                   }
-            } else {
+            } else {  
                   $message .= "<li>Coś poszło nie tak, nie można zapisaż zdjęcia.</li>";
                   $type =  'danger';
             }
 
             $type = empty($type) ? '' : $type;
             FlashMessages::addMessage($message, $type);
-            // parent::redirect('');
+            parent::redirect('');
       }
 
-     
+
 
       /**
        * The Simplest Method
        * https://stackoverflow.com/questions/11376315/creating-a-thumbnail-from-an-uploaded-image
        */
-      public function resize(array $file) : string {
+      public function resize(array $file)
+      {
 
-            $message = ResizeImage::resize();
-            return $message;
-        }
-        
+            // $thumb = ResizeImage::createThumbnail($file, 250);
+            // _dump($thumb);
+            // return $message;
+      }
+
 
 
       /**

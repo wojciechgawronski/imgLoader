@@ -43,3 +43,5 @@ include_once '../views/formView.php';
  * Footer: Show images links 
  */
 new ShowImagesLinks();
+
+

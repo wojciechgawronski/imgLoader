@@ -17,9 +17,8 @@ interface AddFileImgInterface
       
       /**
        * @param array $file global variable $_FILES
-       * 
        */
-      public function saveFile(array $file, string $resizeMessage = '');
+      public function saveFile(array $file);
 
       /**
        * Resize an loaded image, depends on scale
@@ -28,5 +27,5 @@ interface AddFileImgInterface
        * 
        * @return string 
        */
-      public function resize(array $file) : string;
+      public function resize(array $file);
 }

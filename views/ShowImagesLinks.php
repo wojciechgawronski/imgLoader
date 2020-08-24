@@ -31,9 +31,9 @@ class ShowImagesLinks extends File
       /**
        * Czy można użyć funckcji glob() do pobrania rozszeżeń plików ? 
        */
-      public function getImages($filePath = Config::IMG_PATH)
+      public function getImages($filePath = '../' . Config::IMG_PATH)
       {
-            if (file_exists(Config::IMG_PATH)) {
+            if (file_exists('../' . Config::IMG_PATH)) {
 
                   $dir = opendir($filePath);
                   $images = [];
